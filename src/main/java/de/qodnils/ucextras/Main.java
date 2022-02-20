@@ -1,6 +1,7 @@
 package de.qodnils.ucextras;
 
-import net.minecraft.init.Blocks;
+import de.qodnils.ucextras.commands.CheckFactionRanksCommand;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -25,5 +26,6 @@ public class Main {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
+        ClientCommandHandler.instance.registerCommand(new CheckFactionRanksCommand());
     }
 }

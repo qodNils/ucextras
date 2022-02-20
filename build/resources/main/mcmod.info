@@ -1,0 +1,18 @@
+[
+    {
+      "modid": "ucextras",
+      "name": "UC Extras",
+      "description": "An addition to UC Utils for UnicaCity",
+      "version": "0.1",
+      "mcversion": "1.12.2",
+      "authorList": [
+        "qodNils"
+      ],
+      "requiredMods": [
+        "ucutils"
+      ],
+      "dependencies": [
+        "ucutils"
+      ]
+    }
+]
