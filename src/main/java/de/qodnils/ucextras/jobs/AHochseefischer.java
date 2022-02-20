@@ -1,7 +1,6 @@
 package de.qodnils.ucextras.jobs;
 
 import de.qodnils.ucextras.listeners.ServerConnectListener;
-import de.qodnils.ucextras.utils.ConfigUtils;
 import de.qodnils.ucextras.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -19,6 +18,7 @@ import java.util.regex.Pattern;
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber
 public class AHochseefischer {
+    // Messages + Regex Message Pattern
     private static final String fprefix = "[Fischer] ";
     private static final String catchfish = fprefix + "Fahre nun zu den Fischschwärmen und wirf dein Fischenetz mit /catchfish aus.";
     private static final String findswarm = fprefix + "Mit /findschwarm kannst du dir den nächsten Fischschwarm anzeigen lassen.";
@@ -32,7 +32,7 @@ public class AHochseefischer {
     private static final String dropfisch = fprefix + "Dort kannst du den Fisch mit /dropfisch abgeben";
     private static final Pattern FISH_RECEIVED_PATTERN = Pattern.compile("^\\[Fischer] Du hast ([0-9]+)kg frischen Fisch gefangen! \\(([0-9]+)kg\\)$");
     private static final Pattern FINAL_FISH_PATTERN = Pattern.compile("^\\[Fischer] Du hast ([0-9]+)kg Fisch gefangen\\.$");
-    public static boolean started;
+    // Functional values
     public static boolean netout;
     public static boolean inswarm;
     public static int netcount = 0;
@@ -40,24 +40,25 @@ public class AHochseefischer {
 
     @SubscribeEvent
     public static void onChatReceived(ClientChatReceivedEvent e) {
+        // Check if on UC
         if (!ServerConnectListener.connectedUC)
             return;
 
         String msg = e.getMessage().getUnformattedText();
         final EntityPlayerSP p = Minecraft.getMinecraft().player;
 
+        // Hochseefischer started
         if (msg.equals(catchfish)) {
-            started = true;
             e.setMessage(TextUtils.addPrefix("§9Hochseefischer gestartet!"));
-            return;
         }
+        // Entered fish-swarm
         if (msg.equals(throwavailable)) {
             inswarm = true;
             if (!netout)
                 p.sendChatMessage("/catchfish");
             e.setMessage(TextUtils.addPrefix("§9Fischschwarm erkannt!"));
-            return;
         }
+        // Received fish
         Matcher FISH_RECEIVED_MATCHER = FISH_RECEIVED_PATTERN.matcher(msg);
         if (FISH_RECEIVED_MATCHER.find()) {
             if (inswarm)
@@ -67,19 +68,19 @@ public class AHochseefischer {
                     + "kg §9Fisch gefangen! §7(§6"
                     + FISH_RECEIVED_MATCHER.group(2)
                     + "kg§7)"));
-            return;
         }
+        // Lost net
         if (msg.equals(lostnet)) {
             if (inswarm)
                 p.sendChatMessage("/catchfish");
             e.setMessage(TextUtils.addPrefix("§cFischernetz verloren!"));
-            return;
         }
+        // Left fish-swarm
         if (msg.equals(leftswarm)) {
             inswarm = false;
             e.setMessage(TextUtils.addPrefix("§cFischschwarm verlassen!"));
-            return;
         }
+        // Threw net
         if (msg.equals(thrownet)) {
             inswarm = false;
             netout = true;
@@ -95,24 +96,23 @@ public class AHochseefischer {
             }, 20100L);
 
             e.setMessage(TextUtils.addPrefix("§9Fischernetz ausgeworfen!"));
-            return;
         }
+        // Drop fish available at harbour
         if (msg.equals(dropfisch)) {
             p.sendChatMessage("/dropfisch");
             e.setCanceled(true);
-            return;
         }
+        // Fish successfully dropped at harbour
         Matcher FINAL_FISH_MATCHER = FINAL_FISH_PATTERN.matcher(msg);
         if (FINAL_FISH_MATCHER.find()) {
             inswarm = false;
             netout = false;
-            started = false;
             netcount = 0;
             e.setMessage(TextUtils.addPrefix("§9Hochseefischer erfolgreich beendet! §7(§6"
                     + FINAL_FISH_MATCHER.group(1)
                     + "kg§7)"));
-            return;
         }
+        // Cancel doubled messages
         if (msg.equals(findswarm) || msg.equals(foundswarm) || msg.equals(waithere) || msg.equals(nonets)) {
             e.setCanceled(true);
         }

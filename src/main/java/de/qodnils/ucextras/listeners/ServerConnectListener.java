@@ -16,11 +16,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ServerConnectListener {
     public static boolean connectedUC;
     private static boolean connected;
-    private static boolean msgsent;
+    private static boolean msgsent = false;
 
     @SubscribeEvent
     public static void onJoin(FMLNetworkEvent.ClientConnectedToServerEvent e) {
         connected = true;
+    }
+
+    @SubscribeEvent
+    public static void onLeave(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
+        connectedUC = false;
+        connected = false;
         msgsent = false;
     }
 
