@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -30,10 +29,10 @@ import java.util.regex.Pattern;
 @Mod.EventBusSubscriber
 public class CheckFactionRanksCommand extends CommandBase implements IClientCommand {
 
+    private static final Pattern FACTION_PLAYER_PATTERN = Pattern.compile("^ » ((?:\\[UC])?\\w+) (\\w+|O'Brien Familie|Calderón Kartell|Kerzakov Familie|La Cosa Nostra|Westside Ballas|News Agency) Rang (\\d)(?: \\| ((?:Nicht )?(?i)im Dienst))?$");
     public static long startedTime;
     public static String[] checkedPlayers;
     public static int checkedPlayersIndex = 0;
-    private static final Pattern FACTION_PLAYER_PATTERN = Pattern.compile("^ » ((?:\\[UC])?\\w+) (\\w+|O'Brien Familie|Calderón Kartell|Kerzakov Familie|La Cosa Nostra|Westside Ballas|News Agency) Rang (\\d)(?: \\| ((?:Nicht )?(?i)im Dienst))?$");
 
     @SubscribeEvent
     public static void onChatReceived(ClientChatReceivedEvent e) {
@@ -41,22 +40,23 @@ public class CheckFactionRanksCommand extends CommandBase implements IClientComm
             return;
         String msg = e.getMessage().getUnformattedText();
         if (msg.equals("Spieler nicht gefunden.")) {
-            e.setCanceled(true);
-            checkedPlayersIndex++;
+            e.setMessage(TextUtils.addPrefix(checkedPlayers[checkedPlayersIndex] + " ➟ §cnicht gefunden"));
+            updateCheckedPlayersIndex();
         }
         if (msg.equals("Der Spieler ist in keiner Fraktion.")) {
             e.setMessage(TextUtils.addPrefix(checkedPlayers[checkedPlayersIndex] + " ➟ Zivilist"));
-            checkedPlayersIndex++;
+            updateCheckedPlayersIndex();
         }
         Matcher FACTION_PLAYER_MATCHER = FACTION_PLAYER_PATTERN.matcher(msg);
         if (FACTION_PLAYER_MATCHER.find()) {
+            // UCPD | FBI | UCMD | NEWS -> Duty
             if (FACTION_PLAYER_MATCHER.group(4) != null) {
                 msg = FACTION_PLAYER_MATCHER.group(1)
                         + " ➟ "
                         + FACTION_PLAYER_MATCHER.group(2)
                         + " ["
                         + FACTION_PLAYER_MATCHER.group(3)
-                        +"] | "
+                        + "] | "
                         + FACTION_PLAYER_MATCHER.group(4);
             } else
                 msg = FACTION_PLAYER_MATCHER.group(1)
@@ -64,10 +64,16 @@ public class CheckFactionRanksCommand extends CommandBase implements IClientComm
                         + FACTION_PLAYER_MATCHER.group(2)
                         + " ["
                         + FACTION_PLAYER_MATCHER.group(3)
-                        +"]";
+                        + "]";
             e.setMessage(TextUtils.addPrefix(msg));
-            checkedPlayersIndex++;
+            updateCheckedPlayersIndex();
         }
+    }
+
+    public static void updateCheckedPlayersIndex() {
+        if (checkedPlayersIndex == (checkedPlayers.length - 1))
+            checkedPlayersIndex = -1;
+        checkedPlayersIndex++;
     }
 
     public boolean allowUsageWithoutPrefix(ICommandSender sender, String message) {
@@ -91,7 +97,7 @@ public class CheckFactionRanksCommand extends CommandBase implements IClientComm
         }
         final EntityPlayerSP p = Minecraft.getMinecraft().player;
         checkedPlayers = args;
-        if (args.length > 4) {
+        if (args.length > 6) {
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                 private int i = 0;
@@ -106,7 +112,7 @@ public class CheckFactionRanksCommand extends CommandBase implements IClientComm
                     p.sendChatMessage("/memberinfo " + args[i]);
                     i++;
                 }
-            },0L, 1000L);
+            }, 0L, 1000L);
         } else {
             startedTime = System.currentTimeMillis();
             for (String player : args) {
