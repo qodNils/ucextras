@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: UCExtras
-Implementation-Version: 1.0
-Specification-Vendor: examplemodsareus
-Specification-Title: examplemod
-Implementation-Timestamp: 2022-02-20T21:44:05+0100
-Specification-Version: 1
-Implementation-Vendor: examplemodsareus
-
