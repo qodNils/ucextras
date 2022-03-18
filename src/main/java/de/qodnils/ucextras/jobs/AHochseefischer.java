@@ -71,7 +71,7 @@ public class AHochseefischer {
         }
         // Lost net
         if (msg.equals(lostnet)) {
-            if (inswarm)
+            if (inswarm && !netout)
                 p.sendChatMessage("/catchfish");
             e.setMessage(TextUtils.addPrefix("§cFischernetz verloren!"));
         }
