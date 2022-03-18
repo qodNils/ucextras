@@ -61,7 +61,7 @@ public class AHochseefischer {
         // Received fish
         Matcher FISH_RECEIVED_MATCHER = FISH_RECEIVED_PATTERN.matcher(msg);
         if (FISH_RECEIVED_MATCHER.find()) {
-            if (inswarm)
+            if (inswarm && !netout)
                 p.sendChatMessage("/catchfish");
             e.setMessage(TextUtils.addPrefix("§9Du hast §6"
                     + FISH_RECEIVED_MATCHER.group(1)
@@ -71,7 +71,7 @@ public class AHochseefischer {
         }
         // Lost net
         if (msg.equals(lostnet)) {
-            if (inswarm)
+            if (inswarm && !netout)
                 p.sendChatMessage("/catchfish");
             e.setMessage(TextUtils.addPrefix("§cFischernetz verloren!"));
         }
