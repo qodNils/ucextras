@@ -1,2 +1,2 @@
 # ucextras
-UC Extras is a usefull mod for [UnicaCity.de](https://forum.unicacity.de)
+UC Extras is a useful mod for [UnicaCity.de](https://forum.unicacity.de)
