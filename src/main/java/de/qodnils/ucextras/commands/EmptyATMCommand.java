@@ -5,7 +5,6 @@ import de.qodnils.ucextras.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -35,6 +34,7 @@ public class EmptyATMCommand extends CommandBase implements IClientCommand {
         Matcher ATM_MSG_MATCHER = ATM_MSG_PATTERN.matcher(msg);
 
         if (ATM_MSG_MATCHER.find()) {
+            e.setCanceled(true);
             p.sendChatMessage("/bank abbuchen " + ATM_MSG_MATCHER.group(1));
         }
     }
@@ -43,15 +43,11 @@ public class EmptyATMCommand extends CommandBase implements IClientCommand {
         return false;
     }
 
-    public String getName() {
-        return "emptyatm";
-    }
+    public String getName() { return "emptyatm"; }
 
-    public String getUsage(ICommandSender sender) {
-        return "/emptyatm";
-    }
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public String getUsage(ICommandSender sender) { return "/emptyatm"; }
+
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if (!(sender instanceof EntityPlayer) || !ServerConnectListener.connectedUC)
             return;
         if (args.length != 0) {
@@ -62,4 +58,6 @@ public class EmptyATMCommand extends CommandBase implements IClientCommand {
         p.sendChatMessage("/atminfo");
         startedTime = System.currentTimeMillis();
     }
+
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) { return true; }
 }
