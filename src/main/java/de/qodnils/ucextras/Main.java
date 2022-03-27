@@ -1,6 +1,7 @@
 package de.qodnils.ucextras;
 
 import de.qodnils.ucextras.commands.CheckFactionRanksCommand;
+import de.qodnils.ucextras.commands.EmptyATMCommand;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -27,5 +28,6 @@ public class Main {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         ClientCommandHandler.instance.registerCommand(new CheckFactionRanksCommand());
+        ClientCommandHandler.instance.registerCommand(new EmptyATMCommand());
     }
 }
