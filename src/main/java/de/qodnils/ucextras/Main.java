@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class Main {
     public static final String MODID = "ucextras";
     public static final String NAME = "UC Extras";
-    public static final String VERSION = "0.1.1";
+    public static final String VERSION = "0.1.2";
 
     public static String prefix = "§3UC Extras§8 >>§7 ";
 
